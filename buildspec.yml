@@ -26,7 +26,7 @@ phases:
       - go vet .
 
       # Run all tests included with our application
-      - go test ./...
+      #- go test ./...
 
   build:
     commands:

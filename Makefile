@@ -1,6 +1,6 @@
 .PHONY: clean deps build deploy
 
-build:
+build: 
 	env GOOS=linux go build  -o bin/goal-create lambdas/goal/create/main.go
 	env GOOS=linux go build  -o bin/goal-edit lambdas/goal/edit/main.go
 	env GOOS=linux go build  -o bin/goal-get lambdas/goal/get/main.go
@@ -12,14 +12,14 @@ build:
 	env GOOS=linux go build  -o bin/user-logout lambdas/user/logout/main.go
 	env GOOS=linux go build  -o bin/user-delete lambdas/user/delete/main.go
 
-deps: gomodegen
+deps: gomodgen
 	export GO111MODULE=on
 	go get ./...
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
 
-deploy: clean build
+deploy:
 	./deploy.sh
 
 gomodgen:
