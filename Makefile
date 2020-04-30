@@ -1,7 +1,6 @@
 .PHONY: clean deps build deploy
 
-build: gomodgen
-	export GO111MODULE=on
+build:
 	env GOOS=linux go build  -o bin/goal-create lambdas/goal/create/main.go
 	env GOOS=linux go build  -o bin/goal-edit lambdas/goal/edit/main.go
 	env GOOS=linux go build  -o bin/goal-get lambdas/goal/get/main.go
@@ -13,7 +12,8 @@ build: gomodgen
 	env GOOS=linux go build  -o bin/user-logout lambdas/user/logout/main.go
 	env GOOS=linux go build  -o bin/user-delete lambdas/user/delete/main.go
 
-deps:
+deps: gomodegen
+	export GO111MODULE=on
 	go get ./...
 
 clean:
