@@ -9,6 +9,7 @@ phases:
 
     commands:
       - echo starting better API pipeline
+      - make deps
       # Install golint
       - go get golang.org/x/lint/golint
 
@@ -16,7 +17,7 @@ phases:
     commands:
 
       # Fetch all dependencies
-      - make deps
+      
       - make build
 
       # Ensure code passes all lint tests
