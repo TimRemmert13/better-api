@@ -1,0 +1,639 @@
+openapi: 3.0.0
+info:
+  title: better-api
+  version: "1.2"
+  contact:
+    name: Tim
+    email: tremmert93@gmail.com
+  description: An API for the better application client types to interact with.
+
+paths:
+  /goals:
+    get:
+      summary: ListGoals
+      security:
+        - BetterUserPool: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      operationId: get-goal
+      description: Get all your created goal
+      tags:
+        - goals
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListGoals.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*403.*':
+            statusCode: '403'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        requestTemplates:
+          application/json: >
+            {
+              "user": "$context.authorizer.claims['cognito:username']"
+            }
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+        
+    post:
+      summary: CreateGoal
+      x-amazon-apigateway-request-validator: Body
+      security: 
+        - BetterUserPool: []
+      responses:
+        '201':
+          description: OK
+      operationId: post-goal
+      description: Create a new goal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Goal'
+      tags:
+        - goals
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateGoal.Arn}/invocations
+        responses:
+          default:
+            statusCode: '201'
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*403.*':
+            statusCode: '403'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        requestTemplates:
+          application/json: >
+            {
+              "user": "$context.authorizer.claims['cognito:username']",
+              "description": $input.json('description'),
+              "achieved": $input.json('achieved'),
+              "title": $input.json('title')
+            }
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+  '/goals/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    put:
+      summary: EditGoal
+      x-amazon-apigateway-request-validator: Full
+      tags:
+        - goals
+      security:
+        - BetterUserPool: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  '':
+                    $ref: '#/components/schemas/Goal'
+        '400':
+          description: Bad Request invalid id
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: No goal found by that id
+      operationId: put-goal-id
+      description: Update an existing goal
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${EditGoal.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*403.*':
+            statusCode: '403'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*404.*':
+            statusCode: '404'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        requestTemplates:
+          application/json: >
+            { 
+              "key": {
+                "id": "$input.params('id')",
+                "user": "$context.authorizer.claims['cognito:username']"
+              },
+              "updates": $input.json('updates')
+            }
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+      requestBody:
+        description: New Goal object to update the existing goal
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                updates:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                    title:
+                      type: string
+                    achieved:
+                      type: boolean
+              required:
+                - updates
+    delete:
+      summary: DeleteGoal
+      x-amazon-apigateway-request-validator: Params
+      tags:
+        - goals
+      security:
+        - BetterUserPool: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request invalid id
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: No Goal found by that id
+      operationId: delete-goal-id
+      description: Delete a goal by its id
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteGoal.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*403.*':
+            statusCode: '403'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*404.*':
+            statusCode: '404'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        requestTemplates:
+          application/json: >
+            {
+              "id": "$input.params('id')",
+              "user": "$context.authorizer.claims['cognito:username']"
+            }
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+    get:
+      summary: GetGoalById
+      x-amazon-apigateway-request-validator: Params
+      tags:
+        - goals
+      security:
+        - BetterUserPool: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+        '400':
+          description: Bad Request Invalid Id
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: No goal found by that id
+      operationId: get-goal-id
+      description: Get a specific goal by its id
+      parameters: []
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetGoal.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*403.*':
+            statusCode: '403'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*404.*':
+            statusCode: '404'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        requestTemplates:
+          application/json: >
+            {
+              "id": "$input.params('id')"
+              "user": "$context.authorizer.claims['cognito:username']"
+            }
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+  '/users/{token}':
+    delete:
+      summary: DeleteUser
+      x-amazon-apigateway-request-validator: Params
+      tags:
+        - users
+      security:
+        - BetterUserPool: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid id
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+      operationId: delete-users
+      description: Delete the currently logged in user
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteUser.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*403.*':
+            statusCode: '403'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*404.*':
+            statusCode: '404'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        requestTemplates:
+          application/json: >
+            {
+              "user": "$context.authorizer.claims['cognito:username']",
+              "token": "$input.params('token')"
+            }
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+    parameters:
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+  /users/login:
+    post:
+      summary: Login
+      x-amazon-apigateway-request-validator: Body
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  access_token:
+                    type: string
+                  expires:
+                    type: string
+                  id_token:
+                    type: string
+                  refresh_token:
+                    type: string
+        '400':
+          description: Bad Request Invalid user credentials
+        '404':
+          description: User not found
+      operationId: post-users-login
+      description: Login with a users account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+        description: The users username and password
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LoginUser.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*404.*':
+            statusCode: '404'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+  /users/logout:
+    post:
+      summary: Logout
+      x-amazon-apigateway-request-validator: Body
+      tags:
+        - users
+      security:
+        - BetterUserPool: []
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request Invalid token
+        '401':
+          description: Unauthorized
+      operationId: post-users-logout
+      description: Logout of your current session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required: 
+                - token
+        description: The current users access token
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LogoutUser.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+          '.*401.*':
+            statusCode: '401'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+  /users/verify:
+    post:
+      summary: Verify
+      x-amazon-apigateway-request-validator: Body
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request invalid token or username
+      operationId: post-users-verify
+      description: Verify users email address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                token:
+                  type: string
+        description: Username and verify token recieved via email
+      tags:
+        - users
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${VerifyUser.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+  /users:
+    post:
+      summary: CreateUser
+      x-amazon-apigateway-request-validator: Body
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request invalid username or password
+      operationId: post-users
+      description: Create a new User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: The new users creditionals of username and password
+      tags:
+        - users
+      x-amazon-apigateway-integration:
+        uri: 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUser.Arn}/invocations
+        responses:
+          default:
+            statusCode: '201'
+          '.*400.*':
+            statusCode: '400'
+            responseTemplates: 
+              application/json: >
+                "error": $input.json("errorMessage")
+        passthroughBehavior: 'when_no_match'
+        httpMethod: 'POST'
+        type: 'aws'
+  
+components:
+  schemas:
+    Goal:
+      title: Goal
+      type: object
+      description: A user created goal
+      properties:
+        id:
+          type: string
+        user:
+          type: string
+        description:
+          type: string
+        title:
+          type: string
+        achieved:
+          type: boolean
+          default: false
+        created:
+          type: string
+        habits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Habit'
+      required:
+        - title
+    Habit:
+      title: Habit
+      type: object
+      properties:
+        id:
+          type: string
+        trigger:
+          type: string
+        routine:
+          type: string
+        reward:
+          type: string
+        name:
+          type: string
+        completed:
+          type: boolean
+        start_date_time:
+          type: string
+        end_date_time:
+          type: string
+      required:
+        - name
+    User:
+      title: User
+      type: object
+      x-tags:
+        - users
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+      required:
+        - username
+        - password
+        - email
+
+  securitySchemes:
+    BetterUserPool:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - arn:aws:cognito-idp:us-east-1:234248903973:userpool/us-east-1_5YFzqyyls
+
+x-amazon-apigateway-request-validators:
+  Full:
+    validateRequestBody: true
+    validateRequestParameters: true
+  Params:
+    validateRequestBody: false
+    validateRequestParameters: true
+  Body:
+    validateRequestBody: true
+    validateRequestParameters: false
+
