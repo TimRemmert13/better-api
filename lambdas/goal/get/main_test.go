@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
-	"github.com/serverless/better/lib/model"
+	"github.com/better-api/lib/model"
 )
 
 type mockGetItem struct {

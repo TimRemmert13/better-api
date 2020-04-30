@@ -11,12 +11,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/google/uuid"
 
-	"github.com/serverless/better/lib/model"
+	"github.com/better-api/lib/model"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/serverless/better/lib/db"
+	"github.com/better-api/lib/db"
 )
 
 type Response struct {

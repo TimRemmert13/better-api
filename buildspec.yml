@@ -9,16 +9,18 @@ phases:
 
     commands:
       - echo starting better API pipeline
-      - make deps
+      - ln -s "${CODEBUILD_SRC_DIR}" "/go/src/better-api"
       # Install golint
       - go get golang.org/x/lint/golint
 
   pre_build:
     commands:
 
+      # enter project directory
+      - cd "go/src/better-api"
+
       # Fetch all dependencies
-      
-      - make build
+      - make deps
 
       # Ensure code passes all lint tests
       - golint -set_exit_status
@@ -31,6 +33,8 @@ phases:
 
   build:
     commands:
+      # build app
+      - make build
       - make deploy
 
   post_build:

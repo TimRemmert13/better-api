@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/serverless/better/lib/model"
+	"github.com/better-api/lib/model"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider/cognitoidentityprovideriface"
@@ -13,8 +13,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
-	"github.com/serverless/better/lib/cognito"
-	"github.com/serverless/better/lib/util"
+	"github.com/better-api/lib/cognito"
+	"github.com/better-api/lib/util"
 )
 
 type LoginInput struct {
