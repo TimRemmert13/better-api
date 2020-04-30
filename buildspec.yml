@@ -17,7 +17,7 @@ phases:
     commands:
 
       # enter project directory
-      - cd "go/src/better-api"
+      - ls
 
       # Fetch all dependencies
       - make deps
