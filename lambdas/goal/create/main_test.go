@@ -7,10 +7,11 @@ import (
 	"os"
 	"testing"
 
+	"better-api/lib/model"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
-	"github.com/better-api/lib/model"
 )
 
 type mockPutItem struct {
@@ -94,7 +95,7 @@ func TestHandleRequest(t *testing.T) {
 		//execute test of function
 		_, err = d.HandleRequest(nil, goal)
 
-		if err.Error() != "Missing property user, id, or title in goal" {
+		if err.Error() != "You must provide a goal user and title" {
 			t.Error("Invalid input passed to create input not caught")
 		}
 

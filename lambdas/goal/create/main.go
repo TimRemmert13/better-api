@@ -11,12 +11,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/google/uuid"
 
-	"github.com/better-api/lib/model"
+	"better-api/lib/model"
+
+	"better-api/lib/db"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/better-api/lib/db"
 )
 
 type Response struct {
@@ -36,7 +37,7 @@ func (d *deps) HandleRequest(ctx context.Context, goal model.Goal) (Response, er
 	if goal.User == "" || goal.Title == "" {
 		return Response{}, model.ResponseError{
 			Code:    400,
-			Message: "You must provide a goal user, id, and title",
+			Message: "You must provide a goal user and title",
 		}
 	}
 

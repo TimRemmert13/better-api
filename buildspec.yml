@@ -9,7 +9,6 @@ phases:
 
     commands:
       - echo starting better API pipeline
-      - ln -s "${CODEBUILD_SRC_DIR}" "/go/src/better-api"
       # Install golint
       - go get golang.org/x/lint/golint
 
@@ -33,9 +32,13 @@ phases:
 
   build:
     commands:
-      # build app
-      - make build
-      - make deploy
+      #upload swagger file to S3 bucket
+      - aws s3 cp open-api.yaml s3://$S3_BUCKET/open-api.yaml
+
+      #Package and upload to s3
+      - aws cloudformation package --template-file $INPUT_FILE \
+                          --output-template-file $OUTPUT_FILE \
+                          --s3-bucket $S3_BUCKET \
 
   post_build:
     commands:
@@ -45,4 +48,5 @@ phases:
 
 artifacts:
   files:
-    - better-api
+    - $OUTPUT_FILE
+    - template-configuration.json

@@ -9,11 +9,12 @@ import (
 	"testing"
 	"time"
 
+	"better-api/lib/model"
+
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
-	"github.com/better-api/lib/model"
 )
 
 type mockDeleteItem struct {

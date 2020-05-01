@@ -4,15 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/better-api/lib/model"
+	"better-api/lib/model"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider/cognitoidentityprovideriface"
 
+	"better-api/lib/cognito"
+
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
-	"github.com/better-api/lib/cognito"
 )
 
 type DeleteUserInput struct {

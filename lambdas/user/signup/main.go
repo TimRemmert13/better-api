@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/better-api/lib/model"
+	"better-api/lib/model"
 
-	"github.com/better-api/lib/cognito"
+	"better-api/lib/cognito"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider/cognitoidentityprovideriface"
@@ -15,8 +15,9 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 
+	"better-api/lib/util"
+
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
-	"github.com/better-api/lib/util"
 )
 
 type UserInput struct {

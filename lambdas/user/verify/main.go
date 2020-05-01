@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/better-api/lib/model"
+	"better-api/lib/model"
+
+	"better-api/lib/cognito"
+	"better-api/lib/util"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider/cognitoidentityprovideriface"
-	"github.com/better-api/lib/cognito"
-	"github.com/better-api/lib/util"
 )
 
 type ConfirmInput struct {
